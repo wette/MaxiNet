@@ -21,3 +21,12 @@ keepScreenOpenOnError = False
 # Start pryo on the worker with debug
 # To debug the Fronted pyro use PYRO_LOGFILE='{stderr}' PYRO_LOGLEVEL=DEBUG python ...
 debugPyroOnWorker = False
+
+
+
+# experimental feature to account for Receive Side Scaling (RSS)
+# on GRE traffic, most RSS hashing algorithms only use the SRC/dest IP Adresses
+# we use multiple IP addresses on workers to spreed traffic more evenly over the rx/tx queues.
+# If a worker has IP w.x.y.z and experimental_useMultipleIPs > 1, this worker must own ip addresses
+# w.x.y.(z), w.x.y.(z+1), ..., w.x.y.(z+experimental_useMultipleIPs)
+experimental_useMultipleIPs = 9

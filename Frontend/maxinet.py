@@ -447,6 +447,18 @@ class Cluster:
         intf = "mn_tun"+str(tid)
         ip1=w1.ip()
         ip2=w2.ip()
+
+        #experimental: use multiple IP adresses for the workers:
+        #this is due to the lack of RSS hashing algorithms to account for the GRE protocol.
+        #on GRE, most RSS hashing algorithms only use src-dest IP addresses to assign packets to queues
+        if config.experimental_useMultipleIPs > 1:
+            ip1_int = [int(a) for a in ip1.split(".")]
+            ip2_int = [int(a) for a in ip2.split(".")]
+            ip1_int[3] += random.randint(0, config.experimental_useMultipleIPs-1)
+            ip2_int[3] += random.randint(0, config.experimental_useMultipleIPs-1)
+            ip1 = "%d.%d.%d.%d" % tuple(ip1_int)
+            ip2 = "%d.%d.%d.%d" % tuple(ip2_int)
+
         self.logger.debug("invoking tunnel create commands on "+ip1+" and "+ip2)
         w1.run_script("create_tunnel.sh "+ip1+" "+ip2+" "+intf+" "+str(tkey))
         w2.run_script("create_tunnel.sh "+ip2+" "+ip1+" "+intf+" "+str(tkey))
